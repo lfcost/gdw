@@ -5,9 +5,39 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
+  def cssDynamic
 
+
+  end
   def index
-    @movies = Movie.all
+    
+    #@movies = Movie.all
+    #get orderby from root values into Session var
+    
+      
+      if params[:orderby]
+        @orderby=params[:orderby]
+        
+        columns = {'title'=>'title', 'release_date'=>'release_date'}
+          if columns.has_key?(@orderby) then
+            
+            @movies = Movie.order([@orderby])
+            if @orderby =='title'
+              @klassT='hilite'
+            end
+            if @orderby=='release_date'
+              @klassR='hilite'
+            end
+          else
+            @orderby = nil
+            
+            @klassT=''
+            klassR=''
+          end
+      else
+         @movies = Movie.all
+      end
+      
   end
 
   def new
