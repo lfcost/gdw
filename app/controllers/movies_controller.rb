@@ -5,23 +5,18 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
-  def cssDynamic
+  
 
-
-  end
+ #region start Index 
   def index
-    
-    #@movies = Movie.all
-    #get orderby from root values into Session var
-    
-      
-      if params[:orderby]
-        @orderby=params[:orderby]
-        
+    if params[:ratings]
+      @ratings = params[:ratings]
+    end
+    if params[:orderby]
+        @orderby=params[:orderby]        
         columns = {'title'=>'title', 'release_date'=>'release_date'}
-          if columns.has_key?(@orderby) then
-            
-            @movies = Movie.order([@orderby])
+          if columns.has_key?(@orderby) then            
+            query = Movie.order([@orderby])
             if @orderby =='title'
               @klassT='hilite'
             end
@@ -29,17 +24,18 @@ class MoviesController < ApplicationController
               @klassR='hilite'
             end
           else
-            @orderby = nil
-            
+            query= Movie
+            @orderby = nil            
             @klassT=''
             klassR=''
           end
       else
-         @movies = Movie.all
+         query  = Movie
       end
-      
+      @movies = @ratings.nil? ? query.all : query.find_all_by_rating(@ratings.map { |r| r[0] })
+      @all_ratings = Movie.ratings  
   end
-
+#region end Index
   def new
     # default: render 'new' template
   end
